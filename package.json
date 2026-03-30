@@ -1,5 +1,5 @@
 {
-  "name": "azure_mcp",
+  "name": "@doctor-blue/azure_devops_mcp",
   "version": "1.0.0",
   "description": "MCP Server for Azure DevOps integration",
   "files": [
