@@ -36,6 +36,11 @@ export const createWorkItemTool: Tool = {
           type: 'string'
         },
         description: 'Tags to add to the work item (optional)'
+      },
+      customFields: {
+        type: 'object',
+        description: 'Additional custom fields to set (e.g., {"Custom.ImpactsandDependencies": "None"})',
+        additionalProperties: true
       }
     },
     required: ['project', 'type', 'title']
@@ -52,7 +57,8 @@ export async function handler(args: CreateWorkItemArgs) {
       args.title,
       args.description,
       args.assignedTo,
-      args.tags
+      args.tags,
+      args.customFields
     );
 
     return {

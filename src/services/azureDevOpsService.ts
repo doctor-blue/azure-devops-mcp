@@ -86,7 +86,8 @@ export class AzureDevOpsService {
     title: string,
     description?: string,
     assignedTo?: string,
-    tags?: string[]
+    tags?: string[],
+    customFields?: Record<string, any>
   ): Promise<WorkItem> {
     const witApi = await this.getWorkItemTrackingApi();
 
@@ -106,12 +107,22 @@ export class AzureDevOpsService {
       });
     }
 
-    if (assignedTo) {
+    if (assignedTo && assignedTo.toLowerCase() !== 'unassigned') {
       patchDocument.push({
         op: Operation.Add,
         path: '/fields/System.AssignedTo',
         value: assignedTo
       });
+    }
+
+    if (customFields) {
+      for (const [key, value] of Object.entries(customFields)) {
+        patchDocument.push({
+          op: Operation.Add,
+          path: `/fields/${key}`,
+          value: value
+        });
+      }
     }
 
     if (tags && tags.length > 0) {
@@ -222,7 +233,6 @@ export class AzureDevOpsService {
     const workApi = await this.getWorkApi();
 
     const iteration: any = {
-      id: name,
       name,
       attributes: {
         startDate: new Date(startDate).toISOString(),

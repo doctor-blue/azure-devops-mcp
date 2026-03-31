@@ -35,6 +35,11 @@ export const updateWorkItemTool: Tool = {
           type: 'string'
         },
         description: 'New tags (optional)'
+      },
+      customFields: {
+        type: 'object',
+        description: 'Additional custom fields to update (e.g., {"Custom.ImpactsandDependencies": "None"})',
+        additionalProperties: true
       }
     },
     required: ['workItemId']
@@ -64,10 +69,11 @@ export async function handler(args: UpdateWorkItemArgs) {
     }
 
     if (args.assignedTo) {
+      const isUnassigned = args.assignedTo.toLowerCase() === 'unassigned';
       updates.push({
         op: Operation.Replace,
         path: '/fields/System.AssignedTo',
-        value: args.assignedTo
+        value: isUnassigned ? '' : args.assignedTo
       });
     }
 
@@ -85,6 +91,16 @@ export async function handler(args: UpdateWorkItemArgs) {
         path: '/fields/System.Tags',
         value: args.tags.join('; ')
       });
+    }
+
+    if (args.customFields) {
+      for (const [key, value] of Object.entries(args.customFields)) {
+        updates.push({
+          op: Operation.Replace, // Or Add depending on whether field exists, Replace usually works for both in ADO
+          path: `/fields/${key}`,
+          value: value
+        });
+      }
     }
 
     if (updates.length === 0) {

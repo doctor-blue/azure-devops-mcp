@@ -5,6 +5,7 @@ export interface CreateWorkItemArgs {
   description?: string;
   assignedTo?: string;
   tags?: string[];
+  customFields?: Record<string, any>;
 }
 
 export interface ListIterationsArgs {
@@ -35,4 +36,5 @@ export interface UpdateWorkItemArgs {
   assignedTo?: string;
   state?: string;
   tags?: string[];
+  customFields?: Record<string, any>;
 }
